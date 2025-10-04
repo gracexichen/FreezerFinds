@@ -3,7 +3,7 @@ import { Store } from '@/types/store';
 
 export function StoreObject({ store }: { store: Store }) {
   return (
-    <Card title={store.store_name} style={{ width: 300 }}>
+    <Card title={store.store_name} style={{ width: 300 }} hoverable>
       <Space direction="vertical">
         <img src={store.picture_url} alt={store.store_name} style={{ maxWidth: '100%' }} />
         <p>

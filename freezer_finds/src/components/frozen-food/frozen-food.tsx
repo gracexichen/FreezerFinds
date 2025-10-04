@@ -22,7 +22,7 @@ export function FrozenFoodPage({ id }: { id: string }) {
   }, [id]);
 
   return (
-    <div className="flex flex-col md:flex-row h-screen w-full">
+    <div className="flex flex-col md:flex-row w-full">
       <div className="w-full md:w-1/2 flex items-center justify-center p-6 bg-white">
         {frozenFood && (
           <div className="flex flex-col items-center max-w-md">
@@ -32,6 +32,18 @@ export function FrozenFoodPage({ id }: { id: string }) {
               alt={frozenFood.food_name}
               className="w-64 h-64 object-cover rounded-xl mb-6 border"
             />
+            {/* Rounded to nearest half star */}
+            <div>
+              <span style={{ color: '#fadb14', marginRight: 8 }}>
+                {Array.from({ length: 5 }).map((_, i) => {
+                  const rating = frozenFood.average_rating ?? 0;
+                  if (rating >= i + 1) return '★';
+                  if (rating >= i + 0.5) return '⯨';
+                  return '☆';
+                })}
+              </span>
+              {frozenFood.average_rating?.toFixed(2)}
+            </div>
             <p className="text-lg text-gray-700">
               <span className="font-semibold">Store:</span> {frozenFood.stores?.store_name}
             </p>
