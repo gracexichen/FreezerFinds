@@ -4,21 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { ReviewWithUser } from '@/types/reviews';
 import { createClient } from '@/lib/supabase/client';
 
-export function ReviewDisplay({ resetReviews }: { resetReviews: boolean }) {
+export function ReviewDisplay({ resetReviews, frozenFoodId }: { resetReviews: boolean; frozenFoodId: string }) {
   const [reviews, setReviews] = useState<Array<ReviewWithUser> | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const supabase = createClient();
-      const { data, error } = await supabase.auth.getClaims();
-
-      if (error) {
-        throw error;
-      }
-
-      const userId = data?.claims?.sub; // Remove unused variable
-
-      const response = await fetch(`/api/reviews?user_id=${userId}`);
+      const response = await fetch(`/api/reviews?frozen_food_id=${frozenFoodId}`);
       const dataJson = await response.json();
       console.log('Fetched reviews data:', dataJson);
       setReviews(dataJson);
@@ -33,7 +24,7 @@ export function ReviewDisplay({ resetReviews }: { resetReviews: boolean }) {
         reviews.map((review) => (
           <Review
             key={review.id}
-            userName={review.users.email}
+            userName={review.user.email}
             reviewText={review.review_text}
             createdAt={String(review.created_at)}
             rating={review.rating}

@@ -3,12 +3,13 @@ import { Modal, Input, Rate, Button } from 'antd';
 import { createClient } from '@/lib/supabase/client';
 
 interface AddReviewModalProps {
+  frozenFoodId: string;
   visible: boolean;
   onSubmit: () => void;
   onCancel: () => void;
 }
 
-const AddReviewModal: React.FC<AddReviewModalProps> = ({ visible, onSubmit, onCancel }) => {
+const AddReviewModal: React.FC<AddReviewModalProps> = ({ frozenFoodId, visible, onSubmit, onCancel }) => {
   const [text, setText] = useState('');
   const [rating, setRating] = useState(0);
 
@@ -23,12 +24,14 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ visible, onSubmit, onCa
     // user id
     const userId = data?.claims?.sub;
     console.log('should be user id', userId);
+
+    // user id
     await fetch('/api/reviews', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ review_text: text, rating: rating, user_id: userId })
+      body: JSON.stringify({ review_text: text, rating: rating, frozen_food_id: frozenFoodId, user_id: userId })
     });
 
     // Close modal

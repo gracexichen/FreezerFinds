@@ -8,8 +8,12 @@ export const frozenFoodSchema = z.object({
   store_id: z.string().min(1)
 });
 
-// extend store info
-export const frozenFoodsExtendedSchema = frozenFoodSchema.extend({
+// extended w/ store info and rating
+export const frozenFoodSchemaWithRating = frozenFoodSchema.extend({
+  average_rating: z.number()
+});
+
+export const frozenFoodsExtendedSchema = frozenFoodSchemaWithRating.extend({
   stores: z
     .object({
       id: z.string().uuid(),

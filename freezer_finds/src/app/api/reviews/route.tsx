@@ -7,33 +7,41 @@ export async function GET(req: Request) {
     const supabase = await createClient();
 
     const { searchParams } = new URL(req.url);
-    const user_id = searchParams.get('user_id');
+    const frozen_food_id = searchParams.get('frozen_food_id');
 
-    console.log('Received user_id:', user_id);
-    if (!user_id) {
-      console.log('user_id is missing in the request');
-      return NextResponse.json({ error: 'Missing user_id' }, { status: 400 });
+    console.log('Received frozen_food_id:', frozen_food_id);
+    if (!frozen_food_id) {
+      console.log('frozen_food_id is missing in the request');
+      throw new Error('Missing frozen_food_id');
     }
 
     // Join between reviews and users table (done this way since it's in different schemas)
     const { data: reviews } = await supabase
       .schema('app')
       .from('reviews')
-      .select('id, review_text, rating, created_at, user_id')
-      .eq('user_id', user_id);
+      .select('id, review_text, rating, created_at, frozen_food_id, user_id')
+      .eq('frozen_food_id', frozen_food_id);
 
     if (!reviews) {
-      console.log('No reviews found for user_id:', user_id);
+      console.log('No reviews found for frozen_food_id:', frozen_food_id);
       return NextResponse.json([]);
     }
 
     const userIds = reviews.map((r) => r.user_id);
     console.log('Fetching user data for user IDs:', userIds);
-    const { data: users, error } = await supabase.schema('auth').from('users').select('id, email').in('id', userIds);
-    if (error) {
-      console.log('Error fetching users:', error.message);
+
+    let users = [];
+    for (const id of userIds) {
+      const { data, error: userError } = await supabase.auth.admin.getUserById(id);
+      if (userError) {
+        throw new Error(userError.message);
+      }
+      if (data) {
+        users.push({ id: data.user.id, email: data.user.email });
+      }
     }
-    if (!users) {
+
+    if (!users.length) {
       console.log('No users found for the given user IDs');
       return NextResponse.json([]);
     }
@@ -58,14 +66,19 @@ export async function POST(request: Request) {
     const reviewObject = {
       review_text: body.review_text as string,
       rating: Number(body.rating), // Convert to number
+      frozen_food_id: body.frozen_food_id as string,
       user_id: body.user_id as string
     };
 
-    const parsedBody = reviewSchema.pick({ review_text: true, rating: true, user_id: true }).safeParse(reviewObject);
+    const parsedBody = reviewSchema
+      .pick({ review_text: true, rating: true, frozen_food_id: true, user_id: true })
+      .safeParse(reviewObject);
     if (!parsedBody.success) {
       console.error('Validation errors:', parsedBody.error.issues);
       throw new Error(`Invalid review data: ${parsedBody.error.issues.map((e) => e.message).join(', ')}`);
     }
+
+    console.log('Inserting review:', parsedBody.data);
 
     const { error: databaseError } = await supabase.schema('app').from('reviews').insert(parsedBody.data).select();
     if (databaseError) {

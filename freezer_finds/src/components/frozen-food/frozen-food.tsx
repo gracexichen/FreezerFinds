@@ -23,7 +23,6 @@ export function FrozenFoodPage({ id }: { id: string }) {
 
   return (
     <div className="flex flex-col md:flex-row h-screen w-full">
-      {/* Left side */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-6 bg-white">
         {frozenFood && (
           <div className="flex flex-col items-center max-w-md">
@@ -40,15 +39,15 @@ export function FrozenFoodPage({ id }: { id: string }) {
         )}
       </div>
 
-      {/* Right side */}
       <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-6 bg-gray-50">
-        <ReviewDisplay resetReviews={resetReviews} />
+        <ReviewDisplay resetReviews={resetReviews} frozenFoodId={id} />
         <Button variant="secondary" onClick={() => setIsModalOpen(true)}>
           Add Review
         </Button>
       </div>
       {isModalOpen && (
         <AddReviewModal
+          frozenFoodId={id}
           visible={isModalOpen}
           onSubmit={() => {
             // closes modal

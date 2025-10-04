@@ -14,14 +14,29 @@ export async function GET(request: Request, { params }: { params: { id: string }
       .eq('id', id)
       .single();
 
-    if (frozenFood && frozenFood.picture_url) {
+    if (!frozenFood) {
+      throw new Error('Frozen food item not found');
+    }
+
+    if (frozenFood.picture_url) {
       const updatedUrl = await getPublicUrl(frozenFood.picture_url, 'frozen_food_images');
       frozenFood.picture_url = updatedUrl;
     }
 
-    if (error) throw new Error(error.message);
+    // Get average ratings
+    const { data: ratings, error: ratingsError } = await supabase
+      .schema('app')
+      .from('reviews')
+      .select('rating')
+      .eq('frozen_food_id', frozenFood.id);
 
-    return NextResponse.json(frozenFood);
+    if (ratingsError) {
+      console.error('Failed to fetch ratings for food:', frozenFood.id, ratingsError);
+    }
+    const ratingValues = ratings?.map((r) => r.rating) || [];
+    const averageRating = ratingValues.length ? ratingValues.reduce((a, b) => a + b, 0) / ratingValues.length : 0;
+
+    return NextResponse.json({ ...frozenFood, average_rating: averageRating });
   } catch (error) {
     console.error('Error in GET /api/frozen-foods/[id]:', (error as Error).message);
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });
