@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { Modal, Input, Rate, Button } from 'antd';
 import { createClient } from '@/lib/supabase/client';

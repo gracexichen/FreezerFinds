@@ -1,17 +1,16 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createAPIClient } from '@/lib/supabase/api';
 import { frozenFoodSchema } from '@/types/frozen_foods';
 import { getPublicUrl, uploadImageToSupabase } from '@/app/api/shared/sharedFunctions';
 
 export async function GET(req: Request) {
   try {
-    const supabase = await createClient();
+    const supabase = await createAPIClient();
 
     const { searchParams } = new URL(req.url);
     const query = searchParams.get('query') || '';
 
     const { data: frozenFoods, error } = await supabase
-      .schema('app')
       .from('frozen_foods')
       .select('id, food_name, picture_url, store_id, stores(id, store_name)')
       .ilike('food_name', `%${query}%`);
@@ -36,7 +35,6 @@ export async function GET(req: Request) {
 
         // Get average ratings
         const { data: ratings, error: ratingsError } = await supabase
-          .schema('app')
           .from('reviews')
           .select('rating')
           .eq('frozen_food_id', food.id);
@@ -65,7 +63,7 @@ export async function GET(req: Request) {
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient();
+    const supabase = await createAPIClient();
     const formData = await request.formData();
 
     const file = formData.get('food-image') as File;

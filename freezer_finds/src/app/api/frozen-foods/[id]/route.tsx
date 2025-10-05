@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/client';
+import { createAPIClient } from '@/lib/supabase/api';
 import { getPublicUrl } from '@/app/api/shared/sharedFunctions';
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const id = params.id;
 
   try {
-    const supabase = await createClient();
+    const supabase = await createAPIClient();
 
     const { data: frozenFood, error } = await supabase
       .from('frozen_foods')

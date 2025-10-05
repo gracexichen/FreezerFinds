@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { ReviewWithUser } from '@/types/reviews';
-import { createClient } from '@/lib/supabase/client';
 
 export function ReviewDisplay({ resetReviews, frozenFoodId }: { resetReviews: boolean; frozenFoodId: string }) {
   const [reviews, setReviews] = useState<Array<ReviewWithUser> | null>(null);

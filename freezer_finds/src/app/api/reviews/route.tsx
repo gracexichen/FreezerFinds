@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createAPIClient } from '@/lib/supabase/api';
 import { reviewSchema } from '@/types/reviews';
 
 export async function GET(req: Request) {
   try {
-    const supabase = await createClient();
+    console.log('called reviews get api');
+    const supabase = await createAPIClient();
 
     const { searchParams } = new URL(req.url);
     const frozen_food_id = searchParams.get('frozen_food_id');
@@ -16,11 +17,17 @@ export async function GET(req: Request) {
     }
 
     // Join between reviews and users table (done this way since it's in different schemas)
-    const { data: reviews } = await supabase
+    const { data: reviews, error: fetchError } = await supabase
       .schema('app')
       .from('reviews')
       .select('id, review_text, rating, created_at, frozen_food_id, user_id')
       .eq('frozen_food_id', frozen_food_id);
+    console.log('Fetched reviews:', reviews);
+
+    if (fetchError) {
+      console.log('Error fetching reviews:', fetchError);
+      throw new Error(fetchError.message);
+    }
 
     if (!reviews) {
       console.log('No reviews found for frozen_food_id:', frozen_food_id);
@@ -60,7 +67,7 @@ export async function GET(req: Request) {
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient();
+    const supabase = await createAPIClient();
     const body = await request.json();
 
     const reviewObject = {

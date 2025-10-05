@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/client';
+import { createAPIClient } from '@/lib/supabase/api';
 import { storeSchema } from '@/types/store';
 import { uploadImageToSupabase } from '@/app/api/shared/sharedFunctions';
 import { getPublicUrl } from '@/app/api/shared/sharedFunctions';
 
 export async function GET(req: Request) {
   try {
-    const supabase = await createClient();
+    const supabase = await createAPIClient();
 
     const { searchParams } = new URL(req.url);
     const query = searchParams.get('query') || '';
@@ -46,7 +46,7 @@ export async function GET(req: Request) {
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient();
+    const supabase = await createAPIClient();
     const formData = await request.formData();
 
     console.log('Form Data Entries:');

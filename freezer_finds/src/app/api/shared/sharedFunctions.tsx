@@ -1,7 +1,7 @@
-import { createClient } from '@/lib/supabase/client';
+import { createAPIClient } from '@/lib/supabase/api';
 
 export async function uploadImageToSupabase(file: File, bucket: string): Promise<string> {
-  const supabase = await createClient();
+  const supabase = await createAPIClient();
   const dateString = new Date().toISOString();
   const filePath = `images/${dateString}_${file.name}`;
   const { error: storageError } = await supabase.storage.from(bucket).upload(filePath, file);
@@ -12,7 +12,7 @@ export async function uploadImageToSupabase(file: File, bucket: string): Promise
 }
 
 export async function getPublicUrl(filePath: string, bucket: string): Promise<string> {
-  const supabase = await createClient();
+  const supabase = await createAPIClient();
   const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
   if (!data) {
     throw new Error(`Error retrieving image: ${data}`);
