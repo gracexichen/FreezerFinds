@@ -21,7 +21,7 @@ export function ReviewDisplay({ resetReviews, frozenFoodId }: { resetReviews: bo
     <>
       {Array.isArray(reviews) && reviews.length > 0 ? (
         reviews.map((review) => (
-          <Review
+          <ReviewComponent
             key={review.id}
             userName={review.user.email}
             reviewText={review.review_text}
@@ -43,7 +43,7 @@ type ReviewProps = {
   rating: number;
 };
 
-function Review({
+function ReviewComponent({
   userName = 'Anonymous',
   reviewText = 'No review provided.',
   createdAt = new Date().toLocaleDateString(),
@@ -59,7 +59,7 @@ function Review({
         </span>
       </div>
       <div className="text-gray-700 mb-2">{reviewText}</div>
-      <div className="text-xs text-gray-400">{createdAt}</div>
+      <div className="text-xs text-gray-400">{new Date(createdAt).toLocaleString()}</div>
     </div>
   );
 }

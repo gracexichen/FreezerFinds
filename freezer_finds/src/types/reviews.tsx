@@ -16,5 +16,13 @@ export const reviewWithUserSchema = reviewSchema.extend({
   })
 });
 
+export const reviewWithFrozenFood = reviewSchema.extend({
+  frozen_foods: z.object({
+    id: z.string().uuid(),
+    food_name: z.string().min(1)
+  })
+});
+
 export type Review = z.infer<typeof reviewSchema>;
 export type ReviewWithUser = z.infer<typeof reviewWithUserSchema>;
+export type ReviewWithFrozenFood = z.infer<typeof reviewWithFrozenFood>;

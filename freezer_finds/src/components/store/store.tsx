@@ -75,9 +75,8 @@ export function StorePage({ id }: { id: string }) {
           {store && <Map address={store.address} city={store.city} state={store.state} />}
         </div>
       </div>
-      <div>
-        <h1 className="text-3xl font-bold mb-4 text-center">Frozen Foods</h1>
-
+      <h1 className="text-3xl font-bold mb-4 text-center">Frozen Foods</h1>
+      <div className="flex flex-row flex-wrap justify-center gap-4">
         {frozenfoods && frozenfoods.length > 0 ? (
           frozenfoods.map((food) => <FrozenFoodObject key={food.id} frozenFood={food} />)
         ) : (

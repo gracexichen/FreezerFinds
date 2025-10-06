@@ -7,11 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { showSuccessToast, showErrorToast } from '../shared/toast';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 
 export function AddFrozenFood({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const [foodName, setFoodName] = useState('');
   const [storeId, setStoreId] = useState<string | null>(null);
   const [foodImage, setFoodImage] = useState<File | null>(null);
+
+  const router = useRouter();
 
   const loadOptions = async (inputValue: string) => {
     const res = await fetch(`/api/stores?query=${inputValue}`);
@@ -27,6 +32,14 @@ export function AddFrozenFood({ className, ...props }: React.ComponentPropsWitho
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) {
+      showErrorToast('Please login/signup to add store');
+      return;
+    }
+
     if (!storeId || !foodImage) {
       alert('Please select a store and upload an image.');
       return;
@@ -43,9 +56,10 @@ export function AddFrozenFood({ className, ...props }: React.ComponentPropsWitho
     });
 
     if (!res.ok) {
-      alert('Failed to add store');
+      showErrorToast('Unable to add frozen food');
     } else {
-      alert('Store added successfully');
+      showSuccessToast('Successfully added frozen food!');
+      router.push('/');
     }
   };
 

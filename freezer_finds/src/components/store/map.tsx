@@ -13,9 +13,12 @@ export default function Map({ address, city, state }: MapProps) {
   useEffect(() => {
     const fetchCoords = async () => {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`
+        `https://nominatim.openstreetmap.org/search?street=${encodeURIComponent(address)}&city=${encodeURIComponent(
+          city
+        )}&state=${encodeURIComponent(state)}&format=json&limit=1`
       );
       const data = await res.json();
+      console.log('Apparently this is coords:', data);
       if (data && data.length > 0) {
         setCoords({ lat: data[0].lat, lon: data[0].lon });
       }
