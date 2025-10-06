@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { storeSchema } from '@/types/store';
+import { showSuccessToast, showErrorToast } from '../shared/toast';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 
 import React, { useState } from 'react';
 
@@ -15,9 +17,18 @@ export function AddStore({ className, ...props }: React.ComponentPropsWithoutRef
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [storeLogo, setStoreLogo] = useState<File | null>(null);
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) {
+      showErrorToast('Please login/signup to add store');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('store-name', storeName);
     formData.append('address', address);
@@ -31,9 +42,10 @@ export function AddStore({ className, ...props }: React.ComponentPropsWithoutRef
     });
 
     if (!res.ok) {
-      alert('Failed to add store');
+      showErrorToast('Failed to add store');
     } else {
-      alert('Store added successfully');
+      showSuccessToast('Store added successfully');
+      router.push('/');
     }
   };
 

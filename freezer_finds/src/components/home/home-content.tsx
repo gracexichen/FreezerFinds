@@ -14,6 +14,7 @@ export function HomeContent() {
   const [searchType, setSearchType] = useState<'store' | 'frozenFood'>('store');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [results, setResults] = useState<Store | FrozenFoodExtended | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleFrozenFoodClick = (id: string) => {
     router.push(`/frozen-food/${id}`);
@@ -23,6 +24,7 @@ export function HomeContent() {
     // Fetch data based on searchType and searchQuery
     const fetchData = async () => {
       let data;
+      setLoading(true);
       if (searchType === 'store') {
         const res = await fetch('/api/stores?query=' + searchQuery, {
           method: 'GET'
@@ -36,13 +38,14 @@ export function HomeContent() {
       }
       console.log(data);
       setResults(data);
+      setLoading(false);
     };
     fetchData();
   }, [searchType, searchQuery]);
 
   return (
-    <div className="flex flex-row gap-10 flex-wrap justify-center">
-      <div className="w-2/6">
+    <>
+      <div className="w-1/2 m-10">
         <SearchBar
           searchType={searchType}
           setSearchType={setSearchType}
@@ -51,14 +54,18 @@ export function HomeContent() {
         />
       </div>
       <div className="flex flex-wrap gap-10 justify-center">
-        {searchType === 'store' &&
+        {/* Fix this */}
+        {loading && <>Loading...</>}
+        {!loading &&
+          searchType === 'store' &&
           results &&
           (Array.isArray(results) ? (
             results.map((store) => <StoreObject store={store} />)
           ) : (
             <StoreObject store={results as Store} />
           ))}
-        {searchType === 'frozenFood' &&
+        {!loading &&
+          searchType === 'frozenFood' &&
           results &&
           (Array.isArray(results) ? (
             results.map((food) => (
@@ -74,6 +81,6 @@ export function HomeContent() {
             </div>
           ))}
       </div>
-    </div>
+    </>
   );
 }

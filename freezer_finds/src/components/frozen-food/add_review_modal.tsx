@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Modal, Input, Rate, Button } from 'antd';
 import { createClient } from '@/lib/supabase/client';
+import { showErrorToast } from '../shared/toast';
 
 interface AddReviewModalProps {
   frozenFoodId: string;
@@ -25,6 +26,11 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ frozenFoodId, visible, 
     // user id
     const userId = data?.claims?.sub;
     console.log('should be user id', userId);
+
+    if (!userId) {
+      showErrorToast('Please login or signup to submit a review');
+      return;
+    }
 
     // user id
     await fetch('/api/reviews', {
