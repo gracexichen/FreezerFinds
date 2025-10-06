@@ -1,19 +1,24 @@
 import { createAPIClient } from '@/lib/supabase/api';
 import { NextResponse } from 'next/server';
+import { idSchema } from '../../shared/types';
+import { InvalidRequestError, DatabaseError } from '../../shared/errors';
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id;
-  console.log('Deleting user with:', id);
-
   try {
+    // Validate input
+    const id = params.id;
+    const parsedId = idSchema.safeParse({ id: id });
+    if (!parsedId.success) {
+      throw new InvalidRequestError(['frozen_food_id']);
+    }
+
+    // Delete user by id
     const supabase = await createAPIClient();
-
     const { error } = await supabase.auth.admin.deleteUser(id);
-
-    if (error) throw new Error(error.message);
-    console.log('Account deleted NOOOOOO');
+    if (error) throw new DatabaseError(`${error.message}`);
+    return NextResponse.json({ status: 200 });
   } catch (error) {
-    console.error(`Error in DELETE /api/users/${id}:`, (error as Error).message);
+    console.error(`Error in DELETE /api/users/[id]:`, (error as Error).message);
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }

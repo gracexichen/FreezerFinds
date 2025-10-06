@@ -13,6 +13,7 @@ export function FrozenFoodPage({ id }: { id: string }) {
   useEffect(() => {
     const fetchFrozenFood = async () => {
       const response = await fetch(`/api/frozen-foods/${id}`);
+
       const data = await response.json();
       console.log('Fetched frozen food data:', data);
       setFrozenFood(data);

@@ -1,31 +1,32 @@
 import { createAPIClient } from '@/lib/supabase/api';
-import { getPublicUrl } from '../../shared/sharedFunctions';
 import { NextResponse } from 'next/server';
+import { idSchema } from '../../shared/types';
+import { InvalidRequestError, DatabaseError } from '../../shared/errors';
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id;
-  console.log('Getting store with:', id);
-
   try {
+    // Validate input
+    const id = params.id;
+    const parsedId = idSchema.safeParse({ id: id });
+    if (!parsedId.success) {
+      throw new InvalidRequestError(['frozen_food_id']);
+    }
+
+    // Get store by id
     const supabase = await createAPIClient();
 
-    const { data: stores, error: dberror } = await supabase
+    const { data: stores, error } = await supabase
       .schema('app')
       .from('stores')
       .select('id, store_name, address, city, state, picture_url')
       .eq('id', id)
-      .single(); // Get single record instead of array
+      .single();
 
-    if (dberror) throw new Error(dberror.message);
-
-    if (stores && stores.picture_url) {
-      const updatedUrl = await getPublicUrl(stores.picture_url, 'store_logos');
-      stores.picture_url = updatedUrl;
-    }
+    if (error) throw new DatabaseError(error.message);
 
     return NextResponse.json(stores);
   } catch (error) {
-    console.error(`Error in GET /api/stores/${id}:`, (error as Error).message);
+    console.error(`Error in GET /api/stores/[id]:`, (error as Error).message);
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }

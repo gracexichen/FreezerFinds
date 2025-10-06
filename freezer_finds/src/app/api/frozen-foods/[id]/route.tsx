@@ -1,29 +1,35 @@
 import { NextResponse } from 'next/server';
 import { createAPIClient } from '@/lib/supabase/api';
-import { getPublicUrl } from '@/app/api/shared/sharedFunctions';
+import { idSchema } from '../../shared/types';
+import { InvalidRequestError, DatabaseError, MissingResourceError, AdditionalContextError } from '../../shared/errors';
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id;
-
   try {
     const supabase = await createAPIClient();
+    const id = params.id;
 
+    // Validate input
+    const parsedId = idSchema.safeParse({ id });
+    if (!parsedId.success) {
+      throw new InvalidRequestError(['id']);
+    }
+
+    // Fetch frozen food record
     const { data: frozenFood, error } = await supabase
       .from('frozen_foods')
       .select('id, food_name, picture_url, store_id, stores(id, store_name)')
       .eq('id', id)
       .single();
 
+    if (error) {
+      throw new DatabaseError(error.message);
+    }
+
     if (!frozenFood) {
-      throw new Error('Frozen food item not found');
+      throw new MissingResourceError('frozen food');
     }
 
-    if (frozenFood.picture_url) {
-      const updatedUrl = await getPublicUrl(frozenFood.picture_url, 'frozen_food_images');
-      frozenFood.picture_url = updatedUrl;
-    }
-
-    // Get average ratings
+    // Fetch average rating
     const { data: ratings, error: ratingsError } = await supabase
       .schema('app')
       .from('reviews')
@@ -31,12 +37,18 @@ export async function GET(request: Request, { params }: { params: { id: string }
       .eq('frozen_food_id', frozenFood.id);
 
     if (ratingsError) {
-      console.error('Failed to fetch ratings for food:', frozenFood.id, ratingsError);
+      throw new AdditionalContextError('ratings');
     }
-    const ratingValues = ratings?.map((r) => r.rating) || [];
-    const averageRating = ratingValues.length ? ratingValues.reduce((a, b) => a + b, 0) / ratingValues.length : 0;
 
-    return NextResponse.json({ ...frozenFood, average_rating: averageRating });
+    // Get list of rating values, then compute average
+    const ratingValues = ratings.map((r) => r.rating);
+    const averageRating = ratingValues.length > 0 ? ratingValues.reduce((a, b) => a + b, 0) / ratingValues.length : 0;
+
+    // Return combined result
+    return NextResponse.json({
+      ...frozenFood,
+      average_rating: averageRating
+    });
   } catch (error) {
     console.error('Error in GET /api/frozen-foods/[id]:', (error as Error).message);
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });

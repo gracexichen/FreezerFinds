@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState } from 'react';
 import AsyncSelect from 'react-select/async';
 import { cn } from '@/lib/utils';
@@ -112,7 +111,7 @@ export function AddFrozenFood({ className, ...props }: React.ComponentPropsWitho
                 />
               </div>
               <Button type="submit" className="w-full">
-                Add Store
+                Add Frozen Food
               </Button>
             </div>
           </form>
