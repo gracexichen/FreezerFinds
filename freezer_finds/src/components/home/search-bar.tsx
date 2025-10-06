@@ -12,7 +12,7 @@ interface SearchBarProps {
 
 export function SearchBar({ searchType, setSearchType, searchQuery, setSearchQuery }: SearchBarProps) {
   return (
-    <div>
+    <div className="flex flex-col justify-center items-center">
       <Input type="text" placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
       <Radio.Group value={searchType} onChange={(e) => setSearchType(e.target.value)} className="mt-2">
         <Radio.Button value="store">Store</Radio.Button>
