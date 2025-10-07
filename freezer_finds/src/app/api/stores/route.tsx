@@ -2,32 +2,31 @@ import { NextResponse } from 'next/server';
 import { createAPIClient } from '@/lib/supabase/api';
 import { storeSchema } from '@/types/store';
 import { uploadImageToSupabase } from '@/app/api/shared/sharedFunctions';
-import { getPublicUrl } from '@/app/api/shared/sharedFunctions';
+import { querySchemaWithOptions } from '../shared/types';
+import { InvalidRequestError } from '../shared/errors';
 
 export async function GET(req: Request) {
   try {
-    const supabase = await createAPIClient();
-
+    // Validate input
     const { searchParams } = new URL(req.url);
     const query = searchParams.get('query') || '';
     const asOptions = searchParams.get('asOptions') === 'true';
 
+    const parsedQuery = querySchemaWithOptions.safeParse({ query, asOptions });
+    if (!parsedQuery.success) {
+      throw new InvalidRequestError(['query', 'asOptions']);
+    }
+
+    // Fetch store records based on query
+    const supabase = await createAPIClient();
     const { data: stores, error } = await supabase
       .from('stores')
       .select('id, store_name, address, city, state, picture_url')
       .ilike('store_name', `%${query}%`);
 
-    if (stores && Array.isArray(stores)) {
-      for (const store of stores) {
-        if (store.picture_url) {
-          const updatedUrl = await getPublicUrl(store.picture_url, 'store_logos');
-          store.picture_url = updatedUrl;
-        }
-      }
-    }
-
     if (error) throw new Error(error.message);
 
+    // If asOptions is true, format response w/ value and label
     if (asOptions) {
       const options = stores.map((store) => ({
         value: store.id,

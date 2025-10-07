@@ -1,20 +1,29 @@
-'use client';
+"use client";
+import React, { useState } from "react";
+import AsyncSelect from "react-select/async";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { showSuccessToast, showErrorToast } from "../shared/toast";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
-import React, { useState } from 'react';
-import AsyncSelect from 'react-select/async';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { showSuccessToast, showErrorToast } from '../shared/toast';
-import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
-
-export function AddFrozenFood({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
-  const [foodName, setFoodName] = useState('');
+export function AddFrozenFood({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
+  const [foodName, setFoodName] = useState("");
   const [storeId, setStoreId] = useState<string | null>(null);
   const [foodImage, setFoodImage] = useState<File | null>(null);
+  const [disableSubmit, setDisableSubmit] = useState(false);
 
   const router = useRouter();
 
@@ -26,45 +35,47 @@ export function AddFrozenFood({ className, ...props }: React.ComponentPropsWitho
       label: store.store_name,
       address: store.address,
       city: store.city,
-      state: store.state
+      state: store.state,
     }));
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setDisableSubmit(true);
 
     const supabase = await createClient();
     const { data } = await supabase.auth.getUser();
     if (!data.user) {
-      showErrorToast('Please login/signup to add store');
+      showErrorToast("Please login/signup to add store");
       return;
     }
 
     if (!storeId || !foodImage) {
-      alert('Please select a store and upload an image.');
+      alert("Please select a store and upload an image.");
       return;
     }
 
     const formData = new FormData();
-    formData.append('food-name', foodName);
-    formData.append('store-id', storeId);
-    formData.append('food-image', foodImage);
+    formData.append("food-name", foodName);
+    formData.append("store-id", storeId);
+    formData.append("food-image", foodImage);
 
-    const res = await fetch('/api/frozen-foods', {
-      method: 'POST',
-      body: formData
+    const res = await fetch("/api/frozen-foods", {
+      method: "POST",
+      body: formData,
     });
 
     if (!res.ok) {
-      showErrorToast('Unable to add frozen food');
+      showErrorToast("Unable to add frozen food");
     } else {
-      showSuccessToast('Successfully added frozen food!');
-      router.push('/');
+      showSuccessToast("Successfully added frozen food!");
+      router.push("/");
     }
+    setDisableSubmit(false);
   };
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Add Frozen Food</CardTitle>
@@ -95,7 +106,9 @@ export function AddFrozenFood({ className, ...props }: React.ComponentPropsWitho
                     `${option.label} (${option.address}, ${option.city}, ${option.state})`
                   }
                   defaultOptions
-                  onChange={(selectedOption) => setStoreId(selectedOption?.value || null)}
+                  onChange={(selectedOption) =>
+                    setStoreId(selectedOption?.value || null)
+                  }
                   placeholder="Search stores"
                 />
               </div>
@@ -111,8 +124,8 @@ export function AddFrozenFood({ className, ...props }: React.ComponentPropsWitho
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">
-                Add Store
+              <Button type="submit" className="w-full" disabled={disableSubmit}>
+                Add Frozen Food
               </Button>
             </div>
           </form>

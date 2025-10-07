@@ -1,60 +1,75 @@
-'use client';
+"use client";
 
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { showSuccessToast, showErrorToast } from '../shared/toast';
-import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { showSuccessToast, showErrorToast } from "../shared/toast";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-export function AddStore({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
-  const [storeName, setStoreName] = useState('');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
+export function AddStore({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
+  const [storeName, setStoreName] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
   const [storeLogo, setStoreLogo] = useState<File | null>(null);
+  const [disableSubmit, setDisableSubmit] = useState(false);
+
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
+    setDisableSubmit(true);
     event.preventDefault();
 
     const supabase = await createClient();
     const { data } = await supabase.auth.getUser();
     if (!data.user) {
-      showErrorToast('Please login/signup to add store');
+      showErrorToast("Please login/signup to add store");
       return;
     }
 
     const formData = new FormData();
-    formData.append('store-name', storeName);
-    formData.append('address', address);
-    formData.append('city', city);
-    formData.append('state', state);
-    formData.append('store-logo', storeLogo!);
+    formData.append("store-name", storeName);
+    formData.append("address", address);
+    formData.append("city", city);
+    formData.append("state", state);
+    formData.append("store-logo", storeLogo!);
 
-    const res = await fetch('/api/stores', {
-      method: 'POST',
-      body: formData // multipart/form-data automatically
+    const res = await fetch("/api/stores", {
+      method: "POST",
+      body: formData, // multipart/form-data automatically
     });
 
     if (!res.ok) {
-      showErrorToast('Failed to add store');
+      showErrorToast("Failed to add store");
     } else {
-      showSuccessToast('Store added successfully');
-      router.push('/');
+      showSuccessToast("Store added successfully");
+      router.push("/");
     }
+    setDisableSubmit(false);
   };
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Add Grocery Store</CardTitle>
-          <CardDescription>Add a grocery store to the global database.</CardDescription>
+          <CardDescription>
+            Add a grocery store to the global database.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
@@ -120,7 +135,7 @@ export function AddStore({ className, ...props }: React.ComponentPropsWithoutRef
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={disableSubmit}>
                 Add Store
               </Button>
             </div>

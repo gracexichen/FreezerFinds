@@ -27,3 +27,4 @@ export const frozenFoodsExtendedSchema = frozenFoodSchemaWithRating.extend({
 
 export type FrozenFood = z.infer<typeof frozenFoodSchema>;
 export type FrozenFoodExtended = z.infer<typeof frozenFoodsExtendedSchema>;
+export type FrozenFoodWithRating = z.infer<typeof frozenFoodSchemaWithRating>;
