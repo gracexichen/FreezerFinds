@@ -9,4 +9,7 @@ export const storeSchema = z.object({
   picture_url: z.string().min(1)
 });
 
+export const storeExtendedSchema = storeSchema.extend({ label: z.string().min(1), value: z.string().uuid() });
+
 export type Store = z.infer<typeof storeSchema>;
+export type StoreOption = z.infer<typeof storeExtendedSchema>;

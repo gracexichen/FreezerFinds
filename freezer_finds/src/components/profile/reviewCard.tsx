@@ -1,8 +1,8 @@
-import { ReviewWithFrozenFood } from "@/types/reviews";
-import { Card, Popconfirm } from "antd";
-import { DeleteOutlined, RightSquareOutlined } from "@ant-design/icons";
-import Link from "next/link";
-import { showErrorToast, showSuccessToast } from "../shared/toast";
+import { ReviewWithFrozenFood } from '@/types/reviews';
+import { Card, Popconfirm } from 'antd';
+import { DeleteOutlined, RightSquareOutlined } from '@ant-design/icons';
+import Link from 'next/link';
+import { showErrorToast, showSuccessToast } from '../shared/toast';
 
 type ReviewProps = {
   review: ReviewWithFrozenFood;
@@ -15,15 +15,16 @@ export function ReviewCard({ review }: Partial<ReviewProps>) {
         return;
       }
       const response = await fetch(`/api/reviews/delete/${review.id}`, {
-        method: "DELETE",
+        method: 'DELETE'
       });
       if (!response.ok) {
-        throw new Error("Failed to delete review");
+        throw new Error('Failed to delete review');
       }
-      showSuccessToast("Review deleted successfully");
+      showSuccessToast('Review deleted successfully');
       window.location.reload();
-    } catch (error) {
-      showErrorToast("Unable to delete review");
+    } catch (err) {
+      console.log(err);
+      showErrorToast('Unable to delete review');
     }
   }
 
@@ -41,25 +42,17 @@ export function ReviewCard({ review }: Partial<ReviewProps>) {
             />
           </Link>
         </div>
-      }
-    >
+      }>
       <div className="flex items-center justify-between mb-2">
         <span className="text-yellow-500">
-          {"★".repeat(review.rating)}
-          {"☆".repeat(5 - review.rating)}
+          {'★'.repeat(review.rating)}
+          {'☆'.repeat(5 - review.rating)}
         </span>
       </div>
       <div className="text-gray-700 mb-5">{review.review_text}</div>
-      <div className="text-xs text-gray-400">
-        {new Date(review.created_at).toLocaleString()}
-      </div>
+      <div className="text-xs text-gray-400">{new Date(review.created_at).toLocaleString()}</div>
       <div className="flex justify-end mt-3">
-        <Popconfirm
-          title="Delete review?"
-          okText="Yes"
-          cancelText="No"
-          onConfirm={handleDelete}
-        >
+        <Popconfirm title="Delete review?" okText="Yes" cancelText="No" onConfirm={handleDelete}>
           <DeleteOutlined className="text-red-500 hover:text-red-700 cursor-pointer text-2xl" />
         </Popconfirm>
       </div>

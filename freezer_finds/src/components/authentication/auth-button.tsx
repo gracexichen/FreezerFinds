@@ -1,14 +1,15 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { Button } from "../ui/button";
-import { createClient } from "@/lib/supabase/client";
-import { LogoutButton } from "./logout-button";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Button } from '../ui/button';
+import { createClient } from '@/lib/supabase/client';
+import { LogoutButton } from './logout-button';
+import type { User } from '@supabase/supabase-js';
 
 export function AuthButton() {
   const supabase = createClient();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,13 +20,11 @@ export function AuthButton() {
     });
 
     // Listen for login/logout
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log("Auth event:", event);
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth event:', event);
 
-        setUser(session?.user ?? null);
-      }
-    );
+      setUser(session?.user ?? null);
+    });
 
     return () => listener.subscription.unsubscribe();
   }, [supabase]);

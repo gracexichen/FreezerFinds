@@ -7,9 +7,7 @@ export default function ReviewSkeleton() {
       className="w-80"
       title={
         <div className="flex justify-between items-center">
-          <span className="font-semibold">
-            <Skeleton className="w-1/2 h-4" />
-          </span>
+          <Skeleton className="w-1/2 h-4" />
           <RightSquareOutlined
             className="text-2xl text-blue-500 hover:text-blue-700 cursor-pointer"
             onClick={(e) => e.stopPropagation()}
@@ -17,9 +15,7 @@ export default function ReviewSkeleton() {
         </div>
       }>
       <div className="flex items-center justify-between mb-2">
-        <span className="text-yellow-500">
-          <Skeleton className="w-20 h-4" />
-        </span>
+        <Skeleton className="w-20 h-4" />
       </div>
       <div className="text-gray-700 mb-5">
         <Skeleton className="w-full h-4" />

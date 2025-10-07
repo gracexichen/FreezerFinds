@@ -28,7 +28,7 @@ export async function GET(req: Request) {
     if (error) throw new Error(error.message);
 
     // Add extended info
-    const extendedFrozenFoods = await addAverageRatingsToFoods(frozenFoods, supabase);
+    const extendedFrozenFoods = await addAverageRatingsToFoods(frozenFoods);
 
     return NextResponse.json(extendedFrozenFoods);
   } catch (error) {
