@@ -1,7 +1,6 @@
 import { createAPIClient } from '@/lib/supabase/api';
-import { FrozenFood, FrozenFoodExtended, FrozenFoodWithRating } from '@/types/frozen_foods';
+import { FrozenFood, FrozenFoodWithRating } from '@/types/frozen_foods';
 import { AdditionalContextError } from './errors';
-import { Review } from '@/types/reviews';
 
 export async function getPublicUrl(filePath: string, bucket: string): Promise<string> {
   const supabase = await createAPIClient();
@@ -24,13 +23,12 @@ export async function uploadImageToSupabase(file: File, bucket: string): Promise
   return publicFilePath;
 }
 
-export async function addAverageRatingsToFoods(
-  frozenFoods: FrozenFood[],
-  supabase: any
-): Promise<FrozenFoodWithRating[]> {
+export async function addAverageRatingsToFoods(frozenFoods: FrozenFood[]): Promise<FrozenFoodWithRating[]> {
+  const supabase = await createAPIClient();
   const extendedFrozenFoods = await Promise.all(
     frozenFoods.map(async (food) => {
       const { data: ratings, error: ratingsError } = await supabase
+        .schema('app')
         .from('reviews')
         .select('rating')
         .eq('frozen_food_id', food.id);
@@ -44,7 +42,7 @@ export async function addAverageRatingsToFoods(
       }
 
       // Get list of rating values, then compute average
-      const ratingValues = ratings.map((r: Review) => r.rating);
+      const ratingValues = ratings.map((r) => r.rating);
       const averageRating = ratingValues.length
         ? ratingValues.reduce((a: number, b: number) => a + b, 0) / ratingValues.length
         : 0;

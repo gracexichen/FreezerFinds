@@ -25,7 +25,7 @@ export function ReviewDisplay({
     };
 
     fetchData();
-  }, [resetReviews]);
+  }, [resetReviews, frozenFoodId]);
 
   if (loading) {
     return (

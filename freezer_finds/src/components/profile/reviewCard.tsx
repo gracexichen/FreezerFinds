@@ -22,7 +22,8 @@ export function ReviewCard({ review }: Partial<ReviewProps>) {
       }
       showSuccessToast('Review deleted successfully');
       window.location.reload();
-    } catch (error) {
+    } catch (err) {
+      console.log(err);
       showErrorToast('Unable to delete review');
     }
   }

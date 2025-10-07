@@ -1,14 +1,17 @@
 import { Card, Space } from 'antd';
 import { FrozenFoodExtended } from '@/types/frozen_foods';
+import Image from 'next/image';
 
 export function FrozenFoodObject({ frozenFood }: { frozenFood: FrozenFoodExtended }) {
   return (
     <Card title={frozenFood.food_name} style={{ width: 300 }} hoverable>
       <Space direction="vertical">
-        <img
+        <Image
           src={frozenFood.picture_url}
           alt={frozenFood.food_name}
           className="w-full h-64 object-contain border border-gray-200 rounded-xl"
+          width={300}
+          height={256}
         />
         <p>
           <strong>Ratings:</strong>{' '}

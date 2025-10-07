@@ -23,29 +23,43 @@ export function HomeContent() {
 
   useEffect(() => {
     const controller = new AbortController();
-    // Fetch data based on searchType and searchQuery
+    let isMounted = true; // track if component is still mounted
+
     const fetchData = async () => {
-      let data;
-      setResults(null);
-      setLoading(true);
-      if (searchType === 'store') {
-        const res = await fetch('/api/stores?query=' + searchQuery, {
-          method: 'GET',
-          signal: controller.signal
-        });
-        data = await res.json();
-      } else {
-        const res = await fetch('/api/frozen-foods?query=' + searchQuery, {
-          method: 'GET',
-          signal: controller.signal
-        });
-        data = await res.json();
+      try {
+        setResults(null);
+        setLoading(true);
+
+        let data;
+
+        if (searchType === 'store') {
+          const res = await fetch('/api/stores?query=' + searchQuery, {
+            signal: controller.signal
+          });
+          data = await res.json();
+        } else {
+          const res = await fetch('/api/frozen-foods?query=' + searchQuery, {
+            signal: controller.signal
+          });
+          data = await res.json();
+        }
+
+        if (isMounted) {
+          setResults(data);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.log(error);
+        if (isMounted) setLoading(false);
       }
-      setResults(data);
-      setLoading(false);
     };
+
     fetchData();
-    return () => controller.abort();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, [searchType, searchQuery]);
 
   return (
@@ -71,7 +85,7 @@ export function HomeContent() {
           searchType === 'store' &&
           results &&
           (Array.isArray(results) ? (
-            results.map((store) => <StoreObject store={store} />)
+            results.map((store) => <StoreObject store={store} key={store.id} />)
           ) : (
             <StoreObject store={results as Store} />
           ))}

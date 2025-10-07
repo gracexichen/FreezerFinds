@@ -31,7 +31,7 @@ export function Map({ address, city, state }: MapProps) {
     return (
       <div className="flex flex-col items-center w-full">
         <Skeleton className="w-full h-[300px] rounded-xl" />
-        <p>Loading map for "{address}"... This may take a moment.</p>{' '}
+        <p>Loading map for `&quot;{address}`&quot;... This may take a moment.</p>{' '}
       </div>
     );
 

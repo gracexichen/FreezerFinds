@@ -1,4 +1,4 @@
-import { User } from '@/types/user';
+import type { User } from '@supabase/supabase-js';
 import { Card, Button, Popconfirm } from 'antd';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
@@ -24,6 +24,7 @@ export function UserDetails({ user }: { user: User }) {
       await supabase.auth.signOut();
       router.push('/auth/sign-up');
     } catch (error) {
+      console.log(error);
       showErrorToast('Unable to delete account');
     }
   }

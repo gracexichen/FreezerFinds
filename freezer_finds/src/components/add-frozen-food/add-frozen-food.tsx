@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { showSuccessToast, showErrorToast } from '../shared/toast';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { StoreOption } from '@/types/store';
 
 export function AddFrozenFood({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const [foodName, setFoodName] = useState('');
@@ -21,7 +22,7 @@ export function AddFrozenFood({ className, ...props }: React.ComponentPropsWitho
   const loadOptions = async (inputValue: string) => {
     const res = await fetch(`/api/stores?query=${inputValue}`);
     const data = await res.json();
-    return data.map((store: any) => ({
+    return data.map((store: StoreOption) => ({
       value: store.id,
       label: store.store_name,
       address: store.address,
@@ -93,7 +94,7 @@ export function AddFrozenFood({ className, ...props }: React.ComponentPropsWitho
                 <AsyncSelect
                   cacheOptions
                   loadOptions={loadOptions}
-                  getOptionLabel={(option: any) =>
+                  getOptionLabel={(option: StoreOption) =>
                     `${option.label} (${option.address}, ${option.city}, ${option.state})`
                   }
                   defaultOptions

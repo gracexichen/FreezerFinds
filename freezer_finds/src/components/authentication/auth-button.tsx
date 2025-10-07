@@ -5,10 +5,11 @@ import Link from 'next/link';
 import { Button } from '../ui/button';
 import { createClient } from '@/lib/supabase/client';
 import { LogoutButton } from './logout-button';
+import type { User } from '@supabase/supabase-js';
 
 export function AuthButton() {
   const supabase = createClient();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

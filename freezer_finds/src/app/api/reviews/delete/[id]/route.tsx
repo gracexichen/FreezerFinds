@@ -3,19 +3,19 @@ import { NextResponse } from 'next/server';
 import { idSchema } from '../../../shared/types';
 import { InvalidRequestError } from '../../../shared/errors';
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createAPIClient();
 
     // Validate input
-    const id = params.id;
+    const { id } = await params;
     const parsedId = idSchema.safeParse({ id: id });
     if (!parsedId.success) {
       throw new InvalidRequestError(['id']);
     }
 
     // Delete the review with the given id
-    const response = await supabase.from('reviews').delete().eq('id', id);
+    const response = await supabase.schema('app').from('reviews').delete().eq('id', id);
     if (response.error) {
       throw new Error(response.error.message);
     }

@@ -3,10 +3,10 @@ import { NextResponse } from 'next/server';
 import { idSchema } from '../../shared/types';
 import { DatabaseError, InvalidRequestError } from '../../shared/errors';
 
-export async function GET(request: Request, { params }: { params: { user_id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ user_id: string }> }) {
   try {
     // Validate input
-    const user_id = params.user_id;
+    const { user_id } = await params;
 
     const parsedId = idSchema.safeParse({ id: user_id });
     if (!parsedId.success) {

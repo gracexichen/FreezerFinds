@@ -13,12 +13,8 @@ export function UserDetailsSkeleton() {
       }
       className="w-1/2">
       <div className="mb-4 flex flex-col">
-        <p className="text-base font-medium">
-          <Skeleton className="w-1/2 h-4" />
-        </p>
-        <p className="text-base font-medium">
-          <Skeleton className="w-1/2 h-4" />
-        </p>
+        <Skeleton className="w-1/2 h-4" />
+        <Skeleton className="w-1/2 h-4" />
       </div>
     </Card>
   );

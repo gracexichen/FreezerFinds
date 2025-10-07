@@ -6,10 +6,8 @@ export function DisplaySkeleton() {
     <Card title={<Skeleton className="h-4 w-[150px]" />}>
       <Space direction="vertical">
         <Skeleton className="w-full h-64 border border-gray-200 rounded-xl" />
-        <p>
-          <Skeleton className="h-4 w-[250px] mb-2" />
-          <Skeleton className="h-4 w-[250px]" />
-        </p>
+        <Skeleton className="h-4 w-[250px] mb-2" />
+        <Skeleton className="h-4 w-[250px]" />
       </Space>
     </Card>
   );

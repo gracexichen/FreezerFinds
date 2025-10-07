@@ -7,9 +7,10 @@ import { ReviewCard } from './reviewCard';
 import { UserDetails } from './userDetails';
 import { UserDetailsSkeleton } from './userDetailSkeleton';
 import ReviewSkeleton from './reviewsSkeleton';
+import type { User } from '@supabase/supabase-js';
 
 export default function ProfileMain() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [userReviews, setUserReviews] = useState<ReviewWithFrozenFood[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(true);
@@ -63,7 +64,7 @@ export default function ProfileMain() {
 
   return (
     <div className="flex flex-col items-center">
-      <UserDetails user={user} />
+      {user && <UserDetails user={user} />}
       <h2 className="text-2xl mt-10 text-center">Reviews</h2>
       <div className="flex flex-row flex-wrap gap-4 mt-6 justify-center items-center w-full">
         {userReviews && userReviews.length > 0 ? (

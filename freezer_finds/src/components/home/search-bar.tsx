@@ -1,6 +1,6 @@
 'use client';
 
-import { Input, Radio, Skeleton } from 'antd';
+import { Input, Radio } from 'antd';
 import React, { useState, useEffect } from 'react';
 
 interface SearchBarProps {

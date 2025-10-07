@@ -3,10 +3,11 @@ import { createAPIClient } from '@/lib/supabase/api';
 import { idSchema } from '../../shared/types';
 import { InvalidRequestError, DatabaseError, MissingResourceError, AdditionalContextError } from '../../shared/errors';
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createAPIClient();
-    const id = params.id;
+    const { id } = await params;
 
     // Validate input
     const parsedId = idSchema.safeParse({ id });
@@ -16,6 +17,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
     // Fetch frozen food record
     const { data: frozenFood, error } = await supabase
+      .schema('app')
       .from('frozen_foods')
       .select('id, food_name, picture_url, store_id, stores(id, store_name)')
       .eq('id', id)
