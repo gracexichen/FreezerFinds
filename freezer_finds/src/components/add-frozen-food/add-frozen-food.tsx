@@ -14,6 +14,7 @@ export function AddFrozenFood({ className, ...props }: React.ComponentPropsWitho
   const [foodName, setFoodName] = useState('');
   const [storeId, setStoreId] = useState<string | null>(null);
   const [foodImage, setFoodImage] = useState<File | null>(null);
+  const [disableSubmit, setDisableSubmit] = useState(false);
 
   const router = useRouter();
 
@@ -31,6 +32,7 @@ export function AddFrozenFood({ className, ...props }: React.ComponentPropsWitho
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setDisableSubmit(true);
 
     const supabase = await createClient();
     const { data } = await supabase.auth.getUser();
@@ -60,6 +62,7 @@ export function AddFrozenFood({ className, ...props }: React.ComponentPropsWitho
       showSuccessToast('Successfully added frozen food!');
       router.push('/');
     }
+    setDisableSubmit(false);
   };
 
   return (
@@ -110,7 +113,7 @@ export function AddFrozenFood({ className, ...props }: React.ComponentPropsWitho
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={disableSubmit}>
                 Add Frozen Food
               </Button>
             </div>

@@ -1,13 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Skeleton } from '../ui/skeleton';
 
 interface MapProps {
   address: string;
   city: string;
   state: string;
 }
-export default function Map({ address, city, state }: MapProps) {
+
+export function Map({ address, city, state }: MapProps) {
   const [coords, setCoords] = useState<{ lat: string; lon: string } | null>(null);
 
   useEffect(() => {
@@ -26,19 +28,17 @@ export default function Map({ address, city, state }: MapProps) {
     fetchCoords();
   }, [address, city, state]);
 
-  if (!coords) return <p>Loading map for “{address}”...</p>;
+  if (!coords)
+    return (
+      <div className="flex flex-col items-center w-full">
+        <Skeleton className="w-full h-[300px] rounded-xl" />
+        <p>Loading map for "{address}"... This may take a moment.</p>{' '}
+      </div>
+    );
 
   const { lat, lon } = coords;
   const bbox = `${Number(lon) - 0.02},${Number(lat) - 0.02},${Number(lon) + 0.02},${Number(lat) + 0.02}`;
   const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
 
-  return (
-    <iframe
-      width="100%"
-      height="300"
-      frameBorder="0"
-      scrolling="no"
-      src={mapUrl}
-      style={{ borderRadius: '12px' }}></iframe>
-  );
+  return <iframe width="100%" height="300" src={mapUrl} className="rounded-xl"></iframe>;
 }

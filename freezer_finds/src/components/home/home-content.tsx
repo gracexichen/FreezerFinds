@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { StoreObject } from './store-object';
-import { FrozenFoodObject } from './frozen-food-object';
+import { FrozenFoodObject } from '../shared/frozen-food-object';
+import { DisplaySkeleton } from '../shared/skeleton';
 import { SearchBar } from './search-bar';
 import { Store } from '@/types/store';
 import { FrozenFoodExtended } from '@/types/frozen_foods';
@@ -21,26 +22,30 @@ export function HomeContent() {
   };
 
   useEffect(() => {
+    const controller = new AbortController();
     // Fetch data based on searchType and searchQuery
     const fetchData = async () => {
       let data;
+      setResults(null);
       setLoading(true);
       if (searchType === 'store') {
         const res = await fetch('/api/stores?query=' + searchQuery, {
-          method: 'GET'
+          method: 'GET',
+          signal: controller.signal
         });
         data = await res.json();
       } else {
         const res = await fetch('/api/frozen-foods?query=' + searchQuery, {
-          method: 'GET'
+          method: 'GET',
+          signal: controller.signal
         });
         data = await res.json();
       }
-      console.log(data);
       setResults(data);
       setLoading(false);
     };
     fetchData();
+    return () => controller.abort();
   }, [searchType, searchQuery]);
 
   return (
@@ -55,7 +60,13 @@ export function HomeContent() {
       </div>
       <div className="flex flex-wrap gap-10 justify-center">
         {/* Fix this */}
-        {loading && <>Loading...</>}
+        {loading && (
+          <>
+            <DisplaySkeleton />
+            <DisplaySkeleton />
+            <DisplaySkeleton />
+          </>
+        )}
         {!loading &&
           searchType === 'store' &&
           results &&

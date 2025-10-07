@@ -17,9 +17,12 @@ export function AddStore({ className, ...props }: React.ComponentPropsWithoutRef
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [storeLogo, setStoreLogo] = useState<File | null>(null);
+  const [disableSubmit, setDisableSubmit] = useState(false);
+
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
+    setDisableSubmit(true);
     event.preventDefault();
 
     const supabase = await createClient();
@@ -47,6 +50,7 @@ export function AddStore({ className, ...props }: React.ComponentPropsWithoutRef
       showSuccessToast('Store added successfully');
       router.push('/');
     }
+    setDisableSubmit(false);
   };
 
   return (
@@ -120,7 +124,7 @@ export function AddStore({ className, ...props }: React.ComponentPropsWithoutRef
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={disableSubmit}>
                 Add Store
               </Button>
             </div>

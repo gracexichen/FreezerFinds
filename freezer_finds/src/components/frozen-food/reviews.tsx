@@ -1,40 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { ReviewWithUser } from '@/types/reviews';
-
-export function ReviewDisplay({ resetReviews, frozenFoodId }: { resetReviews: boolean; frozenFoodId: string }) {
-  const [reviews, setReviews] = useState<Array<ReviewWithUser> | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(`/api/reviews?frozen_food_id=${frozenFoodId}`);
-      const dataJson = await response.json();
-      console.log('Fetched reviews data:', dataJson);
-      setReviews(dataJson);
-    };
-
-    fetchData();
-  }, [resetReviews]);
-
-  return (
-    <>
-      {Array.isArray(reviews) && reviews.length > 0 ? (
-        reviews.map((review) => (
-          <ReviewComponent
-            key={review.id}
-            userName={review.user.email}
-            reviewText={review.review_text}
-            createdAt={String(review.created_at)}
-            rating={review.rating}
-          />
-        ))
-      ) : (
-        <p>No reviews available.</p>
-      )}
-    </>
-  );
-}
+import React from 'react';
+import { Skeleton } from '../ui/skeleton';
 
 type ReviewProps = {
   userName: string;
@@ -43,14 +10,31 @@ type ReviewProps = {
   rating: number;
 };
 
-function ReviewComponent({
+export function ReviewSkeleton() {
+  return (
+    <div className="bg-white m-2 rounded-lg shadow p-4 w-full max-w-3xl mx-auto">
+      <div className="flex items-center justify-between mb-2">
+        <Skeleton className="w-[130px] h-4" />
+        <Skeleton className="w-[40px] h-4" />
+      </div>
+      <div className="text-gray-700 mb-2">
+        <Skeleton className="w-full h-4" />
+      </div>
+      <div className="text-xs text-gray-400">
+        <Skeleton className="w-[100px] h-4" />
+      </div>
+    </div>
+  );
+}
+
+export function ReviewComponent({
   userName = 'Anonymous',
   reviewText = 'No review provided.',
   createdAt = new Date().toLocaleDateString(),
   rating = 0
 }: Partial<ReviewProps>) {
   return (
-    <div className="bg-white m-4 rounded-lg shadow p-4 w-full max-w-3xl mx-auto">
+    <div className="bg-white m-2 rounded-lg shadow p-4 w-full max-w-3xl mx-auto">
       <div className="flex items-center justify-between mb-2">
         <span className="font-semibold">{userName}</span>
         <span className="text-yellow-500">
