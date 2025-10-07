@@ -8,7 +8,7 @@ type ReviewProps = {
   review: ReviewWithFrozenFood;
 };
 
-export function ProfileReviewCard({ review }: Partial<ReviewProps>) {
+export function ReviewCard({ review }: Partial<ReviewProps>) {
   async function handleDelete() {
     try {
       if (!review) {
@@ -37,26 +37,19 @@ export function ProfileReviewCard({ review }: Partial<ReviewProps>) {
           <Link href={`/frozen-food/${review.frozen_foods.id}`}>
             <RightSquareOutlined
               className="text-2xl text-blue-500 hover:text-blue-700 cursor-pointer"
-              onClick={(e) => e.stopPropagation()} // prevent bubbling if card has other click handlers
+              onClick={(e) => e.stopPropagation()}
             />
           </Link>
         </div>
       }>
-      {/* Rating */}
       <div className="flex items-center justify-between mb-2">
         <span className="text-yellow-500">
           {'★'.repeat(review.rating)}
           {'☆'.repeat(5 - review.rating)}
         </span>
       </div>
-
-      {/* Review text */}
       <div className="text-gray-700 mb-5">{review.review_text}</div>
-
-      {/* Date */}
       <div className="text-xs text-gray-400">{new Date(review.created_at).toLocaleString()}</div>
-
-      {/* Delete icon at bottom right */}
       <div className="flex justify-end mt-3">
         <Popconfirm title="Delete review?" okText="Yes" cancelText="No" onConfirm={handleDelete}>
           <DeleteOutlined className="text-red-500 hover:text-red-700 cursor-pointer text-2xl" />

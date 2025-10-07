@@ -1,10 +1,11 @@
-import { Card, Button, Popconfirm } from 'antd';
 import { User } from '@/types/user';
+import { Card, Button, Popconfirm } from 'antd';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { showErrorToast } from '../shared/toast';
 
 export function UserDetails({ user }: { user: User }) {
+  const router = useRouter();
   async function deleteAccount() {
     try {
       console.log('Deleting account');
@@ -22,7 +23,7 @@ export function UserDetails({ user }: { user: User }) {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const router = useRouter();
+      await supabase.auth.signOut();
       router.push('/auth/sign-up');
     } catch (error) {
       showErrorToast('Unable to delete account');
