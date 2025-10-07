@@ -2,13 +2,13 @@ import { StorePage } from '@/components/store/store';
 import React from 'react';
 
 interface StorePageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function Store({ params }: StorePageProps) {
-  const { id } = params;
+export default async function Store({ params }: StorePageProps) {
+  const { id } = await params;
   return (
     <>
       <div className="flex flex-col md:flex-row gap-8">

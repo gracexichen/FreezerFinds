@@ -4,9 +4,9 @@ import { idSchema } from '../../../shared/types';
 import { DatabaseError, InvalidRequestError } from '@/app/api/shared/errors';
 import { addAverageRatingsToFoods } from '@/app/api/shared/sharedFunctions';
 
-export async function GET(request: Request, { params }: { params: { store_id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ store_id: string }> }) {
   try {
-    const store_id = params.store_id;
+    const { store_id } = await params;
 
     // Validate input
     const parsedId = idSchema.safeParse({ id: store_id });
@@ -18,6 +18,7 @@ export async function GET(request: Request, { params }: { params: { store_id: st
     const supabase = await createAPIClient();
 
     const { data: frozenFoods, error } = await supabase
+      .schema('app')
       .from('frozen_foods')
       .select('id, created_at, food_name, picture_url, store_id, stores(id, store_name)')
       .eq('store_id', store_id);
@@ -25,7 +26,7 @@ export async function GET(request: Request, { params }: { params: { store_id: st
     if (error) throw new DatabaseError(error.message);
 
     // Add average ratings to each frozen food item
-    const extendedFrozenFoods = await addAverageRatingsToFoods(frozenFoods, supabase);
+    const extendedFrozenFoods = await addAverageRatingsToFoods(frozenFoods);
 
     return NextResponse.json(extendedFrozenFoods);
   } catch (error) {

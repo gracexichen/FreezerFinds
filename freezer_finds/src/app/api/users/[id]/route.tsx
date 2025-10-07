@@ -1,18 +1,15 @@
-import { createAPIClient } from "@/lib/supabase/api";
-import { NextResponse } from "next/server";
-import { idSchema } from "../../shared/types";
-import { InvalidRequestError, DatabaseError } from "../../shared/errors";
+import { createAPIClient } from '@/lib/supabase/api';
+import { NextResponse } from 'next/server';
+import { idSchema } from '../../shared/types';
+import { InvalidRequestError, DatabaseError } from '../../shared/errors';
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     // Validate input
-    const id = params.id;
+    const { id } = await params;
     const parsedId = idSchema.safeParse({ id: id });
     if (!parsedId.success) {
-      throw new InvalidRequestError(["frozen_food_id"]);
+      throw new InvalidRequestError(['frozen_food_id']);
     }
 
     // Delete user by id
@@ -22,9 +19,6 @@ export async function DELETE(
     return NextResponse.json({ status: 200 });
   } catch (error) {
     console.error(`Error in DELETE /api/users/[id]:`, (error as Error).message);
-    return NextResponse.json(
-      { error: (error as Error).message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }

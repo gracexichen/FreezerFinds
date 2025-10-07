@@ -28,6 +28,7 @@ export async function addAverageRatingsToFoods(frozenFoods: FrozenFood[]): Promi
   const extendedFrozenFoods = await Promise.all(
     frozenFoods.map(async (food) => {
       const { data: ratings, error: ratingsError } = await supabase
+        .schema('app')
         .from('reviews')
         .select('rating')
         .eq('frozen_food_id', food.id);

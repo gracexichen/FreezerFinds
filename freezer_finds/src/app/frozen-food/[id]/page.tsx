@@ -2,13 +2,13 @@ import { FrozenFoodPage } from '@/components/frozen-food/frozen-food';
 import React from 'react';
 
 interface FrozenFoodPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function FrozenFood({ params }: FrozenFoodPageProps) {
-  const { id } = params;
+export default async function FrozenFood({ params }: FrozenFoodPageProps) {
+  const { id } = await params;
   return (
     <>
       <div className="flex flex-col md:flex-row gap-8">
