@@ -10,9 +10,9 @@ export function StoreInfoSkeleton() {
   return (
     <div className="w-full md:w-1/2 flex items-center justify-center p-6 border-2 rounded-xl m-2">
       <div className="flex flex-col items-center max-w-md">
-        <Skeleton className="w-[250px] h-12" />
-        <Skeleton className="w-48 h-48" />
-        <Skeleton className="w-[250px] h-6" />
+        <Skeleton className="w-[160px] h-10 mb-4" />
+        <Skeleton className="w-48 h-48 mb-4" />
+        <Skeleton className="w-[200px] h-6" />
       </div>
     </div>
   );

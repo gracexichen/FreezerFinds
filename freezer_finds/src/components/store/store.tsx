@@ -80,7 +80,11 @@ export function StorePage({ id }: { id: string }) {
           {loading ? (
             <DisplaySkeleton />
           ) : frozenfoods && frozenfoods.length > 0 ? (
-            frozenfoods.map((food) => <FrozenFoodObject key={food.id} frozenFood={food} />)
+            frozenfoods.map((food) => (
+              <Link key={food.id} href={`/frozen-food/${food.id}`}>
+                <FrozenFoodObject frozenFood={food} />
+              </Link>
+            ))
           ) : (
             <div>No frozen foods found.</div>
           )}

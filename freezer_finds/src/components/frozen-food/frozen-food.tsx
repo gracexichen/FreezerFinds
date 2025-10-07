@@ -9,6 +9,7 @@ export function FrozenFoodPage({ id }: { id: string }) {
   const [frozenFood, setFrozenFood] = useState<FrozenFoodExtended | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [resetReviews, setResetReviews] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,7 +23,7 @@ export function FrozenFoodPage({ id }: { id: string }) {
     };
 
     fetchFrozenFood();
-  }, [id]);
+  }, [id, refresh]);
 
   return (
     <div className="flex flex-col md:flex-row w-full items-stretch">
@@ -42,6 +43,8 @@ export function FrozenFoodPage({ id }: { id: string }) {
             setIsModalOpen(false);
           }}
           onCancel={() => setIsModalOpen(false)}
+          setRefresh={setRefresh}
+          refresh={refresh}
         />
       )}
     </div>

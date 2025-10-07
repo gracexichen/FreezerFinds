@@ -1,4 +1,4 @@
-import AppLogo from '@/public/app_logo.png';
+import AppLogo from '../../../public/app_logo.png';
 import { AuthButton } from '@/components/authentication/auth-button';
 import Link from 'next/link';
 import { Button } from '../ui/button';
@@ -13,6 +13,11 @@ export function Navbar() {
           <span className="font-semibold text-lg text-gray-800">Freezer Finds</span>
         </Link>
         <div className="flex items-center gap-4">
+          <Link href="/">
+            <Button size="sm" variant={'link'}>
+              Search
+            </Button>
+          </Link>
           <Link href="/add-frozen-food">
             <Button size="sm" variant={'link'}>
               Add Frozen Food
