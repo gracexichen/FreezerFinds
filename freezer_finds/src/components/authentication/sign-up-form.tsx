@@ -31,11 +31,13 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
     }
 
     try {
+      const redirectTo = process.env.NEXT_PUBLIC_REDIRECT_URL;
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`
+          emailRedirectTo: redirectTo
         }
       });
       if (error) throw error;
