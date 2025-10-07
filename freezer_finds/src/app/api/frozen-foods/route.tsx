@@ -15,7 +15,6 @@ export async function GET(req: Request) {
 
     const parsedId = querySchema.safeParse({ query });
     if (!parsedId.success) {
-      console.log('Invalid query parameter:', query);
       throw new InvalidRequestError(['query']);
     }
 

@@ -9,9 +9,18 @@ interface AddReviewModalProps {
   visible: boolean;
   onSubmit: () => void;
   onCancel: () => void;
+  setRefresh: (value: boolean) => void;
+  refresh: boolean;
 }
 
-const AddReviewModal: React.FC<AddReviewModalProps> = ({ frozenFoodId, visible, onSubmit, onCancel }) => {
+const AddReviewModal: React.FC<AddReviewModalProps> = ({
+  frozenFoodId,
+  visible,
+  onSubmit,
+  onCancel,
+  setRefresh,
+  refresh
+}) => {
   const [text, setText] = useState('');
   const [rating, setRating] = useState(0);
 
@@ -25,7 +34,6 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ frozenFoodId, visible, 
 
     // user id
     const userId = data?.claims?.sub;
-    console.log('should be user id', userId);
 
     if (!userId) {
       showErrorToast('Please login or signup to submit a review');
@@ -45,6 +53,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ frozenFoodId, visible, 
     onSubmit();
     setText('');
     setRating(0);
+    setRefresh(!refresh);
   };
 
   const handleCancel = () => {

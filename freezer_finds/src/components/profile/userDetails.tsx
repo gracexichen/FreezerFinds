@@ -8,7 +8,6 @@ export function UserDetails({ user }: { user: User }) {
   const router = useRouter();
   async function deleteAccount() {
     try {
-      console.log('Deleting account');
       const supabase = await createClient();
 
       const { data } = await supabase.auth.getUser();
@@ -16,7 +15,6 @@ export function UserDetails({ user }: { user: User }) {
         return;
       }
 
-      console.log('Calling API to delete this: ', data.user.id);
       const response = await fetch(`/api/users/${data.user.id}`, {
         method: 'DELETE'
       });

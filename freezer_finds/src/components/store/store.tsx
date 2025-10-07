@@ -1,20 +1,18 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { Store } from "@/types/store";
-import { Map } from "./map";
-import { FrozenFoodExtended } from "@/types/frozen_foods";
-import { FrozenFoodObject } from "../shared/frozen-food-object";
-import { StoreInfo, StoreInfoSkeleton } from "./storeInfo";
-import { DisplaySkeleton } from "../shared/skeleton";
-import { PlusSquareOutlined } from "@ant-design/icons";
-import Link from "next/link";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { Store } from '@/types/store';
+import { Map } from './map';
+import { FrozenFoodExtended } from '@/types/frozen_foods';
+import { FrozenFoodObject } from '../shared/frozen-food-object';
+import { StoreInfo, StoreInfoSkeleton } from './storeInfo';
+import { DisplaySkeleton } from '../shared/skeleton';
+import { PlusSquareOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 
 export function StorePage({ id }: { id: string }) {
   const [store, setStore] = useState<null | Store>(null);
   const [loading, setLoading] = useState(true);
-  const [frozenfoods, setFrozenFoods] = useState<FrozenFoodExtended[] | null>(
-    null
-  );
+  const [frozenfoods, setFrozenFoods] = useState<FrozenFoodExtended[] | null>(null);
 
   useEffect(() => {
     const fetchFoods = async () => {
@@ -25,9 +23,8 @@ export function StorePage({ id }: { id: string }) {
         }
         const data = await response.json();
         setFrozenFoods(data);
-        console.log("Fetched foods data:", data);
       } catch (err) {
-        console.error("Error fetching foods:", err);
+        console.error('Error fetching foods:', err);
       }
     };
     fetchFoods();
@@ -45,11 +42,10 @@ export function StorePage({ id }: { id: string }) {
         }
 
         const data = await response.json();
-        console.log("Fetched store data:", data);
 
         setStore(data);
       } catch (err) {
-        console.error("Error fetching store:", err);
+        console.error('Error fetching store:', err);
       } finally {
         setLoading(false);
       }
@@ -66,13 +62,7 @@ export function StorePage({ id }: { id: string }) {
 
         {/* Map display */}
         <div className="w-full md:w-1/2 flex items-center justify-center p-6 border-2 rounded-xl m-2">
-          {store && (
-            <Map
-              address={store.address}
-              city={store.city}
-              state={store.state}
-            />
-          )}
+          {store && <Map address={store.address} city={store.city} state={store.state} />}
         </div>
       </div>
 
@@ -91,7 +81,9 @@ export function StorePage({ id }: { id: string }) {
             <DisplaySkeleton />
           ) : frozenfoods && frozenfoods.length > 0 ? (
             frozenfoods.map((food) => (
-              <FrozenFoodObject key={food.id} frozenFood={food} />
+              <Link key={food.id} href={`/frozen-food/${food.id}`}>
+                <FrozenFoodObject frozenFood={food} />
+              </Link>
             ))
           ) : (
             <div>No frozen foods found.</div>
