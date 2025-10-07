@@ -25,7 +25,6 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ frozenFoodId, visible, 
 
     // user id
     const userId = data?.claims?.sub;
-    console.log('should be user id', userId);
 
     if (!userId) {
       showErrorToast('Please login or signup to submit a review');

@@ -20,7 +20,6 @@ export function ReviewDisplay({
       setLoading(true);
       const response = await fetch(`/api/reviews?frozen_food_id=${frozenFoodId}`);
       const dataJson = await response.json();
-      console.log('Fetched reviews data:', dataJson);
       setReviews(dataJson);
       setLoading(false);
     };

@@ -20,7 +20,6 @@ export function Map({ address, city, state }: MapProps) {
         )}&state=${encodeURIComponent(state)}&format=json&limit=1`
       );
       const data = await res.json();
-      console.log('Apparently this is coords:', data);
       if (data && data.length > 0) {
         setCoords({ lat: data[0].lat, lon: data[0].lon });
       }

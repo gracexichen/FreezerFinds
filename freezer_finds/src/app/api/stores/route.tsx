@@ -48,14 +48,8 @@ export async function POST(request: Request) {
     const supabase = await createAPIClient();
     const formData = await request.formData();
 
-    console.log('Form Data Entries:');
-    for (const entry of formData.entries()) {
-      console.log(entry[0], entry[1]);
-    }
-
     const file = formData.get('store-logo') as File;
     const filePath = await uploadImageToSupabase(file, 'store_logos');
-    console.log('Uploaded file path:', filePath);
 
     const storeObject = {
       store_name: formData.get('store-name') as string,

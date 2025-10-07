@@ -22,7 +22,6 @@ export async function GET(request: Request, { params }: { params: { user_id: str
       .eq('user_id', user_id);
 
     if (error) {
-      console.log('Error fetching reviews:', error);
       throw new DatabaseError(error.message);
     }
 

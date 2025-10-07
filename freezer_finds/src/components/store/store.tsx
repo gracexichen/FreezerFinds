@@ -23,7 +23,6 @@ export function StorePage({ id }: { id: string }) {
         }
         const data = await response.json();
         setFrozenFoods(data);
-        console.log('Fetched foods data:', data);
       } catch (err) {
         console.error('Error fetching foods:', err);
       }
@@ -43,7 +42,6 @@ export function StorePage({ id }: { id: string }) {
         }
 
         const data = await response.json();
-        console.log('Fetched store data:', data);
 
         setStore(data);
       } catch (err) {
